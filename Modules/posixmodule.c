@@ -6606,7 +6606,7 @@ os_utime_impl(PyObject *module, path_t *path, PyObject *times, PyObject *ns,
     create_file_flags = FILE_FLAG_BACKUP_SEMANTICS;
     if (!follow_symlinks)
         create_file_flags |= FILE_FLAG_OPEN_REPARSE_POINT;
-    
+
     Py_BEGIN_ALLOW_THREADS
     hFile = CreateFileW(path->wide, FILE_WRITE_ATTRIBUTES, 0,
                         NULL, OPEN_EXISTING,
