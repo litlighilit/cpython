@@ -179,8 +179,9 @@ if _exists("_have_functions"):
     _add("HAVE_LUTIMES",    "utime")
     _add("HAVE_LSTAT",      "stat")
     _add("HAVE_FSTATAT",    "stat")
-    _add("HAVE_UTIMENSAT",  "utime")
     _add("MS_WINDOWS",      "stat")
+    _add("HAVE_UTIMENSAT",  "utime")
+    _add("MS_WINDOWS",      "utime")
     supports_follow_symlinks = _set
 
     del _set
