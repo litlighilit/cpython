@@ -6522,6 +6522,7 @@ os_utime_impl(PyObject *module, path_t *path, PyObject *times, PyObject *ns,
 #ifdef MS_WINDOWS
     HANDLE hFile;
     FILETIME atime, mtime;
+    DWORD create_file_flags;
 #else
     int result;
 #endif
@@ -6577,7 +6578,7 @@ os_utime_impl(PyObject *module, path_t *path, PyObject *times, PyObject *ns,
         utime.now = 1;
     }
 
-#if !defined(UTIME_HAVE_NOFOLLOW_SYMLINKS)
+#if !defined(UTIME_HAVE_NOFOLLOW_SYMLINKS) || !defined(MS_WINDOWS)
     if (follow_symlinks_specified("utime", follow_symlinks))
         return NULL;
 #endif
@@ -6602,10 +6603,14 @@ os_utime_impl(PyObject *module, path_t *path, PyObject *times, PyObject *ns,
     }
 
 #ifdef MS_WINDOWS
+    create_file_flags = FILE_FLAG_BACKUP_SEMANTICS;
+    if (!follow_symlinks)
+        create_file_flags |= FILE_FLAG_OPEN_REPARSE_POINT;
+    
     Py_BEGIN_ALLOW_THREADS
     hFile = CreateFileW(path->wide, FILE_WRITE_ATTRIBUTES, 0,
                         NULL, OPEN_EXISTING,
-                        FILE_FLAG_BACKUP_SEMANTICS, NULL);
+                        create_file_flags, NULL);
     Py_END_ALLOW_THREADS
     if (hFile == INVALID_HANDLE_VALUE) {
         path_error(path);
